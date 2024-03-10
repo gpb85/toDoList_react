@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Footer from "../components/Footer.jsx";
 
 const TodoList = () => {
   const [formSubject, setFormSubject] = useState("");
@@ -158,6 +159,7 @@ const TodoList = () => {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
