@@ -1,5 +1,5 @@
 import Header from "./components/Header.jsx";
-import Footer from "./components/Footer.jsx";
+
 import { Route, Routes } from "react-router-dom";
 import TodoList from "./Pages/TodoList.jsx";
 

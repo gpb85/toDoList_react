@@ -4,7 +4,9 @@ const TodoList = () => {
   const [formSubject, setFormSubject] = useState("");
   const [formText, setFormText] = useState("");
   const [todolist, setTodoList] = useState([]);
-
+  const [todoEdit, setTodoEdit] = useState("");
+  const [editSubject, setEditSubject] = useState("");
+  const [editText, setEditText] = useState("");
   useEffect(() => {
     const storedTodo = JSON.parse(localStorage.getItem("ListToDo"));
 
@@ -41,6 +43,21 @@ const TodoList = () => {
   const deleteInputs = () => {
     setFormSubject("");
     setFormText("");
+  };
+
+  const handleSaveEdit = (e, todo) => {
+    e.preventDefault();
+    const updatedTodoList = todolist.filter((item) => {
+      if (todo.id === item.id) {
+        item.subject = editSubject;
+        item.text = editText;
+        return true; // Επιστρέφει true για να διατηρηθεί το στοιχείο
+      }
+      return true; // Επιστρέφει true για τα υπόλοιπα στοιχεία
+    });
+    setTodoList(updatedTodoList);
+    localStorage.setItem("ListToDo", JSON.stringify(updatedTodoList));
+    setTodoEdit("");
   };
 
   return (
@@ -86,17 +103,57 @@ const TodoList = () => {
       <div>
         <h1>my list</h1>
         <div>
-          {todolist.map((todo) => (
+          {todolist.map((todo, index) => (
             <div key={todo.id}>
-              <p>title:{todo.subject}</p>
-              <p>text:{todo.text}</p>
-              <button
-                onClick={() => {
-                  handleDelete(todo);
-                }}
-              >
-                <i className="fa-solid fa-trash-can"></i>
-              </button>
+              {todoEdit === todo.id ? (
+                <div className="edit-form">
+                  <form onSubmit={(e) => handleSaveEdit(e, todo)}>
+                    <label htmlFor="edit-title">Title</label>
+                    <input
+                      type="text"
+                      value={editSubject}
+                      onChange={(e) => {
+                        setEditSubject(e.target.value);
+                      }}
+                    />
+                    <label htmlFor="edit-text">Text</label>
+                    <textarea
+                      type="text"
+                      value={editText}
+                      onChange={(e) => {
+                        setEditText(e.target.value);
+                      }}
+                    />
+                    <button type="submit">Save</button>
+                    <button
+                      onClick={() => {
+                        setTodoEdit("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div>
+                  <p>
+                    {index + 1} title: {todo.subject}
+                  </p>
+                  <p>text: {todo.text}</p>
+                  <button onClick={() => handleDelete(todo)}>
+                    <i className="fa-solid fa-trash-can"></i>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditSubject(todo.subject);
+                      setEditText(todo.text);
+                      setTodoEdit(todo.id);
+                    }}
+                  >
+                    <i className="fa-regular fa-pen-to-square"></i>
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
